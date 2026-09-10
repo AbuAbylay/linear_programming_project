@@ -1,6 +1,6 @@
 # Portfolio Optimization & Sensitivity Analysis Pipeline
 
-A production-grade Mean-Variance Optimization (MVO) framework implementing Markowitz portfolio theory, convex quadratic programming with institutional constraints, and Monte Carlo estimation error sensitivity diagnostics.
+A Mean-Variance Optimization (MVO) pipeline implementing Markowitz portfolio theory, convex quadratic programming with institutional-style constraints, and Monte Carlo estimation error sensitivity diagnostics — validated with a unit test suite.
 
 ---
 
@@ -23,6 +23,14 @@ Furthermore, classical MVO is known as an **"error maximizer"**—where small no
   * Asset caps: $w_i \le 0.30$ (maximum 30% per individual asset)
   * Sector diversification caps: $\sum w_{\text{sector}} \le 0.40$ (maximum 40% in any sector)
 * **Sensitivity Analysis Engine:** 100-run Monte Carlo perturbation test adding $\pm 1\%$ Gaussian noise to $\mu$ to measure weight variance.
+* **Performance Metrics:** Annualized return, volatility, Sharpe ratio, cumulative returns, and max drawdown (`src/metrics.py`).
+* **Test Suite:** `pytest` coverage for the closed-form solution, QP bound/sector-cap constraints, closed-form/QP agreement at the min-variance point, and the metrics functions (6/6 passing).
+
+---
+
+## Roadmap
+
+* **CVaR-based tail-risk optimization (in progress):** extending the constrained QP to a linear program minimizing Conditional Value-at-Risk (Rockafellar–Uryasev formulation) as an alternative to variance-based risk.
 
 ---
 
@@ -36,7 +44,11 @@ linear_programming_project/
 │   ├── efficient_frontier.png  # Closed-form vs Constrained frontier
 │   └── sensitivity_analysis.png# Weight instability box plots
 ├── src/
-│   └── markowitz.py            # Main pipeline script
+│   ├── data_loader.py          # Price download, caching, log returns
+│   ├── markowitz.py            # Closed-form + constrained QP, sensitivity analysis
+│   └── metrics.py              # Return, volatility, Sharpe, drawdown
+├── tests/
+│   └── test_markowitz.py       # Unit tests for solvers and metrics
 ├── .gitignore
 ├── README.md
 └── requirements.txt
